@@ -6,7 +6,7 @@ import myUserRoute from "./routes/myUserRoute";
 import myRestaurantRoute from "./routes/myRestaurantRoute";
 import {v2 as cloudinary} from "cloudinary";
 import restaurantRoute from "./routes/restaurantRoute";
-
+import orderRoute from "./routes/OrderRoutes";
 
 // connect to mongodb
 mongoose
@@ -18,23 +18,23 @@ cloudinary.config({
     api_key:process.env.CLOUDINARY_API_KEY,
     api_secret:process.env.CLOUDINARY_API_SECRET
  })
-// initialise express 
 const app = express();
-// convert request to json
-app.use(express.json())
-app.use(cors())
-// testing
 
-app.get("/health",async (req:Request,res:Response)=>{
-    res.send({message:"Health OK!"});
-})
+app.use(cors());
 
-app.use("/api/my/user",myUserRoute)
+app.use("/api/order/checkout/webhook", express.raw({ type: "*/*" }));
 
-app.use("/api/my/restaurant",myRestaurantRoute);
+app.use(express.json());
 
-app.use("/api/restaurant",restaurantRoute);
+app.get("/health", async (req: Request, res: Response) => {
+  res.send({ message: "health OK!" });
+});
+
+app.use("/api/my/user", myUserRoute);
+app.use("/api/my/restaurant", myRestaurantRoute);
+app.use("/api/restaurant", restaurantRoute);
+app.use("/api/order", orderRoute);
 
 app.listen(7000, () => {
-    console.log("server started on 7000")
-})
+  console.log("server started on localhost:7000");
+});
